@@ -4,8 +4,7 @@ import express from "express";
 
 import { logEnvironmentVariables } from "./helpers/envLogger";
 
-import { AppDataSource } from "./utils/dataSource";
-
+import { AppDataSource } from "./entity";
 import mainRouter from "./routes";
 
 dotenv.config();
