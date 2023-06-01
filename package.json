@@ -1,0 +1,52 @@
+{
+  "name": "procurement-backend",
+  "version": "1.0.0",
+  "description": "A procurement API system",
+  "main": "index.js",
+  "scripts": {
+    "predev": "tsc",
+    "dev": "nodemon build/index.js",
+    "prestart": "tsc",
+    "start": "node build/index.js",
+    "nodemon": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UsamaIrfan/procurement-backend.git"
+  },
+  "author": "Usama Irfan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UsamaIrfan/procurement-backend/issues"
+  },
+  "homepage": "https://github.com/UsamaIrfan/procurement-backend#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "config": "^3.3.9",
+    "copy-webpack-plugin": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.2",
+    "pg": "^8.11.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.16"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.2",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^20.2.5",
+    "@types/nodemailer": "^6.4.8",
+    "@types/webpack-node-externals": "^3.0.0",
+    "nodemon": "^2.0.22",
+    "typescript": "^5.0.4",
+    "webpack-cli": "^5.1.1"
+  }
+}
