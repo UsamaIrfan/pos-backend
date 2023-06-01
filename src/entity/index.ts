@@ -1,21 +1,24 @@
 import { DataSource } from "typeorm";
 import "reflect-metadata";
 
+import appConfig from "../config/appConfig";
+
 import { ErrorLog } from "./errorLogs";
 import { User } from "./user";
 
-require("dotenv").config();
-
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_DATABASE,
+  host: appConfig.dbHost,
+  port: Number(appConfig.dbPort),
+  username: appConfig.dbUser,
+  password: appConfig.dbPass,
+  database: appConfig.dbType,
   synchronize: true,
   logging: false,
   entities: [User, ErrorLog],
   migrations: [],
   subscribers: [],
 });
+
+export const userRepository = AppDataSource.getRepository(User);
+export const errorLogRepository = AppDataSource.getRepository(ErrorLog);

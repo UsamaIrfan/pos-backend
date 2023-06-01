@@ -4,12 +4,14 @@ import express from "express";
 
 import { logEnvironmentVariables } from "./helpers/envLogger";
 
+import errorHandler from "./middlewares/errorHandler";
+
 import { AppDataSource } from "./entity";
 import mainRouter from "./routes";
 
 dotenv.config();
 
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 8000;
 
 async function startServer() {
   try {
@@ -43,7 +45,9 @@ async function startServer() {
       res.json({ message: "Welcome to ProcureX backend." });
     });
 
-    app.use("/", mainRouter);
+    app.use("/api/v1", mainRouter);
+
+    app.use(errorHandler);
 
     app.listen(PORT, () => {
       console.log("=====> EnvironmentVariables", logEnvironmentVariables());

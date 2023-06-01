@@ -50,8 +50,12 @@ module.exports = {
         groups: [
           // ext library & side effect imports
           ['^@?\\w', '^\\u0000'],
+          // config
+          ['^.*/config/.*$'],
           // controllers
           ['^.*/controllers/.*$'],
+          // services
+          ['^.*/services/.*$'],
           // entities
           ['^.*/entity/.*$'],
           // helpers
