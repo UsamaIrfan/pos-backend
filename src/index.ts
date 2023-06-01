@@ -1,10 +1,13 @@
-import { AppDataSource } from "./utils/dataSource";
-import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+
+import { logEnvironmentVariables } from "./helpers/envLogger";
+
+import { AppDataSource } from "./utils/dataSource";
+
 import mainRouter from "./routes";
 
-import dotenv from "dotenv";
-import { logEnvironmentVariables } from "./helpers/envLogger";
 dotenv.config();
 
 const PORT = process.env.APP_PORT || 5000;
@@ -38,7 +41,7 @@ async function startServer() {
     app.use(express.static("build/public/editor"));
 
     app.get("/", (req, res) => {
-      res.json({ message: "Welcome to living trust backend." });
+      res.json({ message: "Welcome to ProcureX backend." });
     });
 
     app.use("/", mainRouter);
