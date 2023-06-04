@@ -23,6 +23,9 @@ export class User {
   email: string;
 
   @Column()
+  phoneNumber: string;
+
+  @Column()
   firstName: string;
 
   @Column()
@@ -30,6 +33,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column()
+  isVerified: boolean;
 
   @Column({
     type: "enum",
@@ -40,10 +46,10 @@ export class User {
   roles: ROLES[];
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: string;
+  updatedAt: Date;
 
   @OneToMany(() => ErrorLog, (err) => err.user, { cascade: true })
   error_log: ErrorLog;

@@ -1,7 +1,7 @@
 import { Request } from "express";
 import _ from "lodash";
 
-module.exports = {
+export default {
   object: (obj = {}, fields = []) => {
     return _.pick(obj, ..._.values(fields));
   },
@@ -13,7 +13,7 @@ module.exports = {
       params = [],
       query = [],
       headers = [],
-    }: { body: any[]; params: any[]; query: any[]; headers: any[] }
+    }: { body?: any[]; params?: any[]; query?: any[]; headers?: any[] }
   ) => {
     return _.merge(
       _.pick(req.body, ..._.values(body)),

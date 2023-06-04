@@ -1,3 +1,5 @@
 export enum ROLES {
   USER = "USER",
+  COMPANY_OWNER = "COMPANY_OWNER",
+  COMPANY_STAFF = "COMPANY_STAFF",
 }

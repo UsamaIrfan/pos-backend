@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Email Verification</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #444444;
+      background-color: #f5f5f5;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #3c3c3c;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .code {
+      font-size: 20px;
+      font-weight: bold;
+      color: #007fff;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Email Verification</h1>
+  <p>
+    We received a request to verify your email. To complete the process,
+    please use the following One Time Password (OTP):
+  </p>
+  <p class="code">
+    <%= OTP %>
+  </p>
+  <p>
+    If you didn't make request to verify your email, please ignore this email.
+  </p>
+  <p>Thank you for using our service!</p>
+  <p>Best regards,</p>
+  <p>The ProXcure Team</p>
+</body>
+
+</html>

@@ -1,28 +1,40 @@
+import * as bcrypt from "bcryptjs";
+
+import { User } from "../entity/user";
+
 import { ROLES } from "../utils/enums";
 import { HttpException } from "../utils/response";
 
 import { userRepository } from "../entity";
 
-const create = async (createUserDto: any) => {
+const create = async (createUserDto: User) => {
   const exists = await userRepository.findOne({
     where: [
       { username: createUserDto.username },
       { email: createUserDto.email },
     ],
   });
-  if (exists) {
+  if (exists && exists.isVerified) {
     const message =
       exists.email === createUserDto.email
         ? "Email already taken"
         : "Username already taken";
     throw new HttpException(message, 409);
   }
-  const user = userRepository.create({
-    ...createUserDto,
-    roles: createUserDto.role ?? [ROLES.USER],
-  });
-  //   const hashed = await bcrypt.hash(user.password, 10);
-  //   user.password = hashed;
+  let user: User | null = null;
+  if (exists) {
+    user = await userRepository.save({
+      ...exists,
+      ...createUserDto,
+    });
+  } else {
+    user = userRepository.create({
+      ...createUserDto,
+      roles: createUserDto.roles ?? [ROLES.USER],
+    });
+    const hashed = await bcrypt.hash(user.password, 10);
+    user.password = hashed;
+  }
   return await userRepository.save(user);
 };
 
@@ -36,6 +48,24 @@ const findOne = async (id: number) => {
 
 const findByEmail = async (email: string) => {
   return await userRepository.findOneBy({ email });
+};
+
+const findByEmailOrUsername = async (
+  usernameOrEmail: string,
+  checkVerified?: boolean
+) => {
+  return await userRepository.findOne({
+    where: [
+      {
+        username: usernameOrEmail,
+        ...(checkVerified ? { isVerified: true } : {}),
+      },
+      {
+        email: usernameOrEmail,
+        ...(checkVerified ? { isVerified: true } : {}),
+      },
+    ],
+  });
 };
 
 const update = async (id: number, updateUserDto: any) => {
@@ -61,6 +91,7 @@ const userService = {
   findAll,
   findOne,
   findByEmail,
+  findByEmailOrUsername,
   update,
   updateByEmail,
   remove,
