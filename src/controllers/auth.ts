@@ -7,7 +7,7 @@ import userService from "../services/user";
 
 import asyncHandler from "../utils/asyncHandler";
 import clean from "../utils/clean";
-import { sendVerificationEmail } from "../utils/email";
+import { sendForgetPasswordEmail, sendVerificationEmail } from "../utils/email";
 import { HttpException, SuccessResponse } from "../utils/response";
 import authValidators from "../utils/validation/user";
 
@@ -26,6 +26,7 @@ const login = asyncHandler(async (req, res) => {
     value.usernameOrEmail,
     true
   );
+
   if (!user) {
     throw new HttpException("User not found", 404);
   }
@@ -34,10 +35,7 @@ const login = asyncHandler(async (req, res) => {
     throw new HttpException("User not found", 404);
   }
   delete user.password;
-  const { access_token } = await jwtService.createToken(
-    req.body.email,
-    user.roles
-  );
+  const { access_token } = await jwtService.createToken(user, user.roles);
   res.status(200).send({ token: access_token, user, roles: user?.roles });
 });
 
@@ -100,15 +98,7 @@ const verifyEmailAddress = asyncHandler(async (req, res) => {
 
 const changePassword = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: [
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      "password",
-      "role",
-      "username",
-    ],
+    body: ["oldPassword", "newPassword"],
   });
 
   const { error, value } =
@@ -133,115 +123,94 @@ const changePassword = asyncHandler(async (req: AuthRequest, res) => {
   res.status(200).send(SuccessResponse({}, "Password changed successfully"));
 });
 
-// const forgetPassword = async (forgetPasswordInput: ForgetPasswordDto) => {
-//   const user = await userService.findByEmail(forgetPasswordInput.email);
-//   if (!user) {
-//     return {
-//       success: false,
-//       message: "User not found.",
-//     };
-//   }
-//   const code = (Math.floor(Math.random() * 900000) + 100000).toString();
-//   const forgottenPasswordModel = await forgotPasswordRepository.upsert(
-//     {
-//       email: forgetPasswordInput.email,
-//       forgetPasswordToken: code,
-//     },
-//     ["email"]
-//   );
+const forgetPassword = asyncHandler(async (req, res) => {
+  const body = clean.request(req, {
+    body: ["email"],
+  });
 
-//   const { access_token } = await jwtService.createForgetPasswordToken(
-//     forgetPasswordInput.email
-//   );
-//   await mailService.sendForgetPasswordEmail({ user, code });
-//   if (forgottenPasswordModel) {
-//     return {
-//       token: access_token,
-//       email: user.email,
-//       success: true,
-//       message: "Email has been sent successfully.",
-//     };
-//   } else {
-//     // throw new HttpException(
-//     //   "Unable to create forgot password token.",
-//     //   HttpStatus.INTERNAL_SERVER_ERROR
-//     // );
-//   }
-// };
+  const { error, value } =
+    authValidators.forgetPasswordValidation.validate(body);
 
-// const verifyForgetPasswordToken = async (
-//   verifyForgetPasswordTokenInput: VerifyForgetPasswordDto
-// ) => {
-//   const emailVerif: any = await forgotPasswordRepository.findOne({
-//     where: {
-//       forgetPasswordToken: verifyForgetPasswordTokenInput.token,
-//       email: verifyForgetPasswordTokenInput.email,
-//     },
-//   });
-//   if (
-//     emailVerif &&
-//     (new Date().getTime() - new Date(emailVerif?.updatedAt).getTime()) / 60000 >
-//       10
-//   ) {
-//     // throw new HttpException(
-//     //   "Your verification code has expired.",
-//     //   HttpStatus.BAD_REQUEST
-//     // );
-//   }
-//   if (emailVerif && emailVerif.email) {
-//     const { access_token } = await jwtService.createResetPasswordToken(
-//       emailVerif.email
-//     );
-//     return {
-//       token: access_token,
-//       success: true,
-//       message: "Please change your password.",
-//     };
-//   } else {
-//     // throw new HttpException(
-//     //   "Invalid code or unable to authenticate.",
-//     //   HttpStatus.BAD_REQUEST
-//     // );
-//   }
-// };
+  if (error) {
+    throw new HttpException(error.message, 400);
+  }
 
-// const resetPassword = async (resetPasswordInput: ResetPasswordDto) => {
-//   const emailVerif: any = await forgotPasswordRepository.delete({
-//     forgetPasswordToken: resetPasswordInput.token,
-//     email: resetPasswordInput.email,
-//   });
-//   if (
-//     emailVerif &&
-//     (new Date().getTime() - new Date(emailVerif?.updatedAt).getTime()) / 60000 >
-//       10
-//   ) {
-//     // throw new HttpException(
-//     //   "Your verification code has expired.",
-//     //   HttpStatus.BAD_REQUEST
-//     // );
-//   }
-//   if (emailVerif) {
-//     const password = await bcrypt.hash(resetPasswordInput.password, 10);
-//     await userService.updateByEmail(resetPasswordInput.email, {
-//       password,
-//     });
-//     return {
-//       success: true,
-//       message: "Password change successful",
-//     };
-//   } else {
-//     // throw new HttpException(
-//     //   "Invalid token or unable to authenticate.",
-//     //   HttpStatus.BAD_REQUEST
-//     // );
-//   }
-// };
+  const user = await userService.findByEmail(value.email);
+  if (!user) throw new HttpException("User not found.", 404);
+  const otp = await emailOtpService.create(value.email);
+
+  const { access_token } = await jwtService.createForgetPasswordToken(
+    value.email
+  );
+  await sendForgetPasswordEmail(value?.email, otp?.token);
+  if (otp) {
+    res.status(200).send(
+      SuccessResponse(
+        {
+          token: access_token,
+          email: user.email,
+        },
+        "Email has been sent successfully."
+      )
+    );
+  } else {
+    throw new HttpException("Unable to create forgot password token.", 500);
+  }
+});
+
+const verifyForgetPasswordToken = asyncHandler(async (req, res) => {
+  const body = clean.request(req, { body: ["email", "token"] });
+
+  const { error, value } =
+    authValidators.verifyForgetPasswordValidation.validate(body);
+
+  if (error) {
+    throw new HttpException(error.message, 400);
+  }
+
+  await emailOtpService.verifyOtp(value.token, value.email);
+
+  const { access_token } = await jwtService.createResetPasswordToken(
+    value.email
+  );
+  res.status(200).send(
+    SuccessResponse(
+      {
+        token: access_token,
+      },
+      "Please change your password."
+    )
+  );
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const body = clean.request(req, { body: ["email", "token", "password"] });
+
+  const { error, value } =
+    authValidators.resetPasswordValidation.validate(body);
+
+  if (error) {
+    throw new HttpException(error.message, 400);
+  }
+
+  const verified = await jwtService.decodeAndGetUserWithToken(value.token);
+  if (verified === null)
+    throw new HttpException("Unable to verify forget password token", 400);
+  const password = await bcrypt.hash(value.password, 10);
+  await userService.updateByEmail(value.email, {
+    password,
+  });
+  res.status(200).send(SuccessResponse({}, "Password change successful"));
+});
 
 const authController = {
   login,
   signup,
   changePassword,
   verifyEmailAddress,
+  forgetPassword,
+  verifyForgetPasswordToken,
+  resetPassword,
 };
 
 export default authController;

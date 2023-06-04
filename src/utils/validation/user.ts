@@ -51,6 +51,36 @@ const verifyEmailValidation = Joi.object().keys({
     .messages({ "any.required": "Verification token is required" }),
 });
 
+const verifyForgetPasswordValidation = Joi.object().keys({
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({ "any.required": "Email address is required" }),
+
+  token: Joi.string()
+    .required()
+    .messages({ "any.required": "Verification token is required" }),
+
+  forgetPassToken: Joi.string().required().messages({
+    "any.required": "Forget Password validation token is required",
+  }),
+});
+
+const resetPasswordValidation = Joi.object().keys({
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({ "any.required": "Email address is required" }),
+
+  password: Joi.string()
+    .required()
+    .messages({ "any.required": "Password is required" }),
+
+  token: Joi.string()
+    .required()
+    .messages({ "any.required": "Verification token is required" }),
+});
+
 const changePasswordValidation = Joi.object().keys({
   oldPassword: Joi.string()
     .required()
@@ -59,10 +89,12 @@ const changePasswordValidation = Joi.object().keys({
   newPassword: Joi.string()
     .required()
     .messages({ "any.required": "New Password is required" }),
+});
 
-  password: Joi.string()
+const forgetPasswordValidation = Joi.object().keys({
+  email: Joi.string()
     .required()
-    .messages({ "any.required": "Password is required" }),
+    .messages({ "any.required": "Email is required" }),
 });
 
 const authValidators = {
@@ -70,6 +102,9 @@ const authValidators = {
   registerValidation,
   verifyEmailValidation,
   changePasswordValidation,
+  forgetPasswordValidation,
+  verifyForgetPasswordValidation,
+  resetPasswordValidation,
 };
 
 export default authValidators;

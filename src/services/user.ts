@@ -22,18 +22,19 @@ const create = async (createUserDto: User) => {
     throw new HttpException(message, 409);
   }
   let user: User | null = null;
+  const password = await bcrypt.hash(createUserDto.password, 10);
   if (exists) {
     user = await userRepository.save({
       ...exists,
       ...createUserDto,
+      password,
     });
   } else {
     user = userRepository.create({
       ...createUserDto,
       roles: createUserDto.roles ?? [ROLES.USER],
+      password,
     });
-    const hashed = await bcrypt.hash(user.password, 10);
-    user.password = hashed;
   }
   return await userRepository.save(user);
 };

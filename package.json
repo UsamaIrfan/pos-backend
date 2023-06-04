@@ -11,6 +11,7 @@
     "nodemon": "nodemon src/index.ts",
     "prepare": "husky install",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier -w .",
     "format:check": "prettier -c .",
     "lint:fix": "eslint src --fix && yarn format",
     "lint:strict": "eslint --max-warnings=0 src",
