@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 
 import jwtService from "../services/jwt";
 import emailOtpService from "../services/otp";
+import resetPassTokenService from "../services/resetPasswordToken";
 import userService from "../services/user";
 
 import asyncHandler from "../utils/asyncHandler";
@@ -169,14 +170,12 @@ const verifyForgetPasswordToken = asyncHandler(async (req, res) => {
   }
 
   await emailOtpService.verifyOtp(value.token, value.email);
+  const { jwtToken } = await resetPassTokenService.create(value.email);
 
-  const { access_token } = await jwtService.createResetPasswordToken(
-    value.email
-  );
   res.status(200).send(
     SuccessResponse(
       {
-        token: access_token,
+        token: jwtToken,
       },
       "Please change your password."
     )
@@ -184,7 +183,9 @@ const verifyForgetPasswordToken = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const body = clean.request(req, { body: ["email", "token", "password"] });
+  const body = clean.request(req, {
+    body: ["email", "resetPassToken", "password"],
+  });
 
   const { error, value } =
     authValidators.resetPasswordValidation.validate(body);
@@ -193,9 +194,8 @@ const resetPassword = asyncHandler(async (req, res) => {
     throw new HttpException(error.message, 400);
   }
 
-  const verified = await jwtService.decodeAndGetUserWithToken(value.token);
-  if (verified === null)
-    throw new HttpException("Unable to verify forget password token", 400);
+  await resetPassTokenService.verifyToken(value.resetPassToken, value.email);
+
   const password = await bcrypt.hash(value.password, 10);
   await userService.updateByEmail(value.email, {
     password,

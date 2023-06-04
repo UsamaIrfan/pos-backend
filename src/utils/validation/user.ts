@@ -61,9 +61,7 @@ const verifyForgetPasswordValidation = Joi.object().keys({
     .required()
     .messages({ "any.required": "Verification token is required" }),
 
-  forgetPassToken: Joi.string().required().messages({
-    "any.required": "Forget Password validation token is required",
-  }),
+  forgetPassToken: Joi.string(),
 });
 
 const resetPasswordValidation = Joi.object().keys({
@@ -76,9 +74,9 @@ const resetPasswordValidation = Joi.object().keys({
     .required()
     .messages({ "any.required": "Password is required" }),
 
-  token: Joi.string()
-    .required()
-    .messages({ "any.required": "Verification token is required" }),
+  resetPassToken: Joi.string().required().messages({
+    "any.required": "Reset Password verification token is required",
+  }),
 });
 
 const changePasswordValidation = Joi.object().keys({
