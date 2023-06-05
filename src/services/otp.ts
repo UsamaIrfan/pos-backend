@@ -8,10 +8,10 @@ const create = async (email: string) => {
   const exists = await emailOtpRepository.findOne({
     where: { email },
   });
-  const hasExpired = moment().diff(exists?.createdAt, "minutes") >= 5;
+  const hasExpired = moment().diff(exists?.createdAt, "minutes") >= 2;
   if (!hasExpired && !!exists) {
     throw new HttpException(
-      "An OTP has already been sent to your email address. You can retry after 5 minutes",
+      "An OTP has already been sent to your email address. You can retry after 2 minutes",
       400
     );
   }

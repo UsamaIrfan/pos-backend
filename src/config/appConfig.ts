@@ -1,6 +1,9 @@
 require("dotenv").config();
 
 const appConfig = {
+  clientUrl: process.env.CLIENT_LOCAL_URL,
+  resetPassUrl: process.env.CLIENT_LOCAL_RESET_PASSWORD_URL,
+  emailVerifyUrl: process.env.CLIENT_LOCAL_VERIFY_EMAIL_URL,
   dbHost: process.env.DB_HOST,
   dbPort: process.env.DB_PORT,
   dbUser: process.env.DB_USER,

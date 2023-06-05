@@ -46,9 +46,16 @@ const verifyEmailValidation = Joi.object().keys({
     .required()
     .messages({ "any.required": "Email address is required" }),
 
-  token: Joi.string()
+  otp: Joi.string()
     .required()
-    .messages({ "any.required": "Verification token is required" }),
+    .messages({ "any.required": "Verification code is required" }),
+});
+
+const resendEmailVerificationValidation = Joi.object().keys({
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({ "any.required": "Email address is required" }),
 });
 
 const verifyForgetPasswordValidation = Joi.object().keys({
@@ -57,11 +64,9 @@ const verifyForgetPasswordValidation = Joi.object().keys({
     .required()
     .messages({ "any.required": "Email address is required" }),
 
-  token: Joi.string()
+  otp: Joi.string()
     .required()
     .messages({ "any.required": "Verification token is required" }),
-
-  forgetPassToken: Joi.string(),
 });
 
 const resetPasswordValidation = Joi.object().keys({
@@ -99,6 +104,7 @@ const authValidators = {
   loginValidation,
   registerValidation,
   verifyEmailValidation,
+  resendEmailVerificationValidation,
   changePasswordValidation,
   forgetPasswordValidation,
   verifyForgetPasswordValidation,

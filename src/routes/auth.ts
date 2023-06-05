@@ -13,6 +13,7 @@ authRouter.post(
   authenticate(),
   authController.changePassword
 );
+authRouter.post("/verify-email/resend", authController.resendVerificationEmail);
 authRouter.post("/verify-email", authController.verifyEmailAddress);
 authRouter.post("/forgot-password", authController.forgetPassword);
 authRouter.post("/verify-forgot", authController.verifyForgetPasswordToken);

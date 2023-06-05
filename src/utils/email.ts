@@ -45,12 +45,13 @@ export const sendEmail = async (
   }
 };
 
-export const sendVerificationEmail = async (toEmail: string, token: string) => {
+export const sendVerificationEmail = async (toEmail: string, otp: string) => {
   try {
     const file = await ejs.renderFile(
       path.join(__dirname, "../templates/emailVerify.html"),
       {
-        OTP: token,
+        OTP: otp,
+        LINK: `${appConfig.emailVerifyUrl}?otp=${otp}&email=${toEmail}`,
       }
     );
 
@@ -63,13 +64,15 @@ export const sendVerificationEmail = async (toEmail: string, token: string) => {
 
 export const sendForgetPasswordEmail = async (
   toEmail: string,
-  token: string
+  otp: string,
+  jwtToken: string
 ) => {
   try {
     const file = await ejs.renderFile(
       path.join(__dirname, "../templates/forgetPassword.html"),
       {
-        OTP: token,
+        OTP: otp,
+        LINK: `${appConfig.resetPassUrl}?token=${jwtToken}&email=${toEmail}&otp=${otp}`,
       }
     );
     await sendEmail(toEmail, "Reset Password", file);

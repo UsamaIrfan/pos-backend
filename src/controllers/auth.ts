@@ -76,7 +76,7 @@ const signup = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const verifyEmailAddress = asyncHandler(async (req, res) => {
-  const body = clean.request(req, { body: ["email", "token"] });
+  const body = clean.request(req, { body: ["email", "otp"] });
 
   const { error, value } = authValidators.verifyEmailValidation.validate(body);
 
@@ -94,6 +94,26 @@ const verifyEmailAddress = asyncHandler(async (req, res) => {
     .status(200)
     .send(
       SuccessResponse({}, "Email has been verified successfully. Please login.")
+    );
+});
+
+const resendVerificationEmail = asyncHandler(async (req, res) => {
+  const body = clean.request(req, { body: ["email"] });
+
+  const { error, value } =
+    authValidators.resendEmailVerificationValidation.validate(body);
+
+  if (error) {
+    throw new HttpException(error.message, 400);
+  }
+
+  const otp = await emailOtpService.create(value?.email);
+  await sendVerificationEmail(value?.email, otp?.token);
+
+  res
+    .status(200)
+    .send(
+      SuccessResponse({}, "We have resent a verification code to your email")
     );
 });
 
@@ -143,7 +163,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
   const { access_token } = await jwtService.createForgetPasswordToken(
     value.email
   );
-  await sendForgetPasswordEmail(value?.email, otp?.token);
+  await sendForgetPasswordEmail(value?.email, otp?.token, access_token);
   if (otp) {
     res.status(200).send(
       SuccessResponse(
@@ -160,7 +180,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
 });
 
 const verifyForgetPasswordToken = asyncHandler(async (req, res) => {
-  const body = clean.request(req, { body: ["email", "token"] });
+  const body = clean.request(req, { body: ["email", "otp"] });
 
   const { error, value } =
     authValidators.verifyForgetPasswordValidation.validate(body);
@@ -169,12 +189,13 @@ const verifyForgetPasswordToken = asyncHandler(async (req, res) => {
     throw new HttpException(error.message, 400);
   }
 
-  await emailOtpService.verifyOtp(value.token, value.email);
+  await emailOtpService.verifyOtp(value.otp, value.email);
   const { jwtToken } = await resetPassTokenService.create(value.email);
 
   res.status(200).send(
     SuccessResponse(
       {
+        email: value?.email,
         token: jwtToken,
       },
       "Please change your password."
@@ -211,6 +232,7 @@ const authController = {
   forgetPassword,
   verifyForgetPasswordToken,
   resetPassword,
+  resendVerificationEmail,
 };
 
 export default authController;
