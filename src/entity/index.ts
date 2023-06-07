@@ -3,6 +3,7 @@ import "reflect-metadata";
 
 import appConfig from "../config/appConfig";
 
+import { Company } from "./company";
 import { EmailOtp } from "./emailOtp";
 import { ErrorLog } from "./errorLogs";
 import { ResetPasswordToken } from "./resetPasswordToken";
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
   database: appConfig.dbType,
   synchronize: true,
   logging: false,
-  entities: [User, ErrorLog, EmailOtp, ResetPasswordToken],
+  entities: [User, ErrorLog, EmailOtp, ResetPasswordToken, Company],
   migrations: [],
   subscribers: [],
 });
@@ -27,3 +28,4 @@ export const errorLogRepository = AppDataSource.getRepository(ErrorLog);
 export const emailOtpRepository = AppDataSource.getRepository(EmailOtp);
 export const resetPassTokenRepository =
   AppDataSource.getRepository(ResetPasswordToken);
+export const companyRepository = AppDataSource.getRepository(Company);

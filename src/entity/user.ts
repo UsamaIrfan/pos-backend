@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import {
 
 import { ROLES } from "../utils/enums";
 
+import { Company } from "./company";
 import { ErrorLog } from "./errorLogs";
 
 @Entity()
@@ -37,6 +39,12 @@ export class User {
   @Column()
   isVerified: boolean;
 
+  @OneToMany(() => Company, (company) => company.user, {
+    onDelete: "SET NULL",
+    nullable: true,
+  })
+  company: Company[];
+
   @Column({
     type: "enum",
     enum: ROLES,
@@ -53,4 +61,7 @@ export class User {
 
   @OneToMany(() => ErrorLog, (err) => err.user, { cascade: true })
   error_log: ErrorLog;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

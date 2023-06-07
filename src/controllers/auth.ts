@@ -25,7 +25,8 @@ const login = asyncHandler(async (req, res) => {
 
   const user = await userService.findByEmailOrUsername(
     value.usernameOrEmail,
-    true
+    true,
+    ["company"]
   );
 
   if (!user) {
@@ -48,7 +49,7 @@ const signup = asyncHandler(async (req: Request, res: Response) => {
       "email",
       "phoneNumber",
       "password",
-      "role",
+      "roles",
       "username",
     ],
   });

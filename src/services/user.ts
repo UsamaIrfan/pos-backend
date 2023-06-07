@@ -53,7 +53,8 @@ const findByEmail = async (email: string) => {
 
 const findByEmailOrUsername = async (
   usernameOrEmail: string,
-  checkVerified?: boolean
+  checkVerified?: boolean,
+  relations?: string[]
 ) => {
   return await userRepository.findOne({
     where: [
@@ -66,6 +67,7 @@ const findByEmailOrUsername = async (
         ...(checkVerified ? { isVerified: true } : {}),
       },
     ],
+    relations,
   });
 };
 

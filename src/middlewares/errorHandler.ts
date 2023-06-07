@@ -11,6 +11,8 @@ const errorHandler = (
 ) => {
   const errors = [];
 
+  console.log(err);
+
   // API Not Found
   if (err.message === "Not Found") {
     err = new HttpException("Not Found", 404);
