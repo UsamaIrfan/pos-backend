@@ -3,12 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
+import { Tender } from "./tender";
 import { User } from "./user";
 
 @Entity()
@@ -32,11 +33,10 @@ export class Company {
   otherDetails?: string;
 
   @ManyToOne(() => User, (user) => user.company, { onDelete: "SET NULL" })
-  @JoinColumn({
-    name: "user",
-    referencedColumnName: "id",
-  })
   user: User;
+
+  @OneToMany(() => Tender, (tender) => tender.company, { onDelete: "SET NULL" })
+  tenders: Tender[];
 
   @Column({ nullable: true })
   userId: number;
