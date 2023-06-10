@@ -93,6 +93,20 @@ const getAll = asyncHandler(async (req: AuthRequest, res) => {
   res.status(200).send(SuccessResponse(tenders));
 });
 
+const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
+  const query = clean.request(req, { query: ["companyId", "page", "limit"] });
+
+  const data = await tenderService.paginate({
+    page: query?.page,
+    limit: query?.limit,
+    where: {
+      ...(query?.companyId ? { companyId: query?.companyId } : {}),
+    },
+  });
+
+  res.status(200).send(SuccessResponse(data));
+});
+
 const tenderController = {
   createTender,
   updateTender,
@@ -101,6 +115,7 @@ const tenderController = {
   get,
   getAll,
   restoreTender,
+  getPaginated,
 };
 
 export default tenderController;

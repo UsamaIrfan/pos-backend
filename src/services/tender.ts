@@ -1,11 +1,17 @@
-import { FindOptionsWhere } from "typeorm";
+import { FindManyOptions, FindOptionsWhere } from "typeorm";
 
 import { Tender } from "../entity/tender";
 import { User } from "../entity/user";
 
+import commonUtils from "../utils/common";
 import { HttpException } from "./../utils/response";
 
 import { AppDataSource, tenderRepository } from "../entity";
+
+interface PaginationParams<T> extends FindManyOptions<T> {
+  page: number;
+  limit: number;
+}
 
 const create = async (tenderData: Tender) => {
   const queryRunner = AppDataSource.createQueryRunner();
@@ -59,6 +65,17 @@ const find = async (options: FindOptionsWhere<Tender>) => {
   });
 };
 
+const paginate = async ({
+  page,
+  limit,
+  ...options
+}: PaginationParams<Tender>) => {
+  return await commonUtils.paginate<Tender>(tenderRepository, options, {
+    page,
+    limit,
+  });
+};
+
 const tenderService = {
   create,
   update,
@@ -66,6 +83,7 @@ const tenderService = {
   restore,
   findOne,
   find,
+  paginate,
 };
 
 export default tenderService;

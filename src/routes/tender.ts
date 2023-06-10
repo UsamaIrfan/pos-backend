@@ -16,7 +16,7 @@ tenderRouter.post(
 );
 
 // Get (Only Active)
-tenderRouter.get("/", authenticate(), tenderController.get);
+tenderRouter.get("/", authenticate(), tenderController.getPaginated);
 
 // Get (All)
 tenderRouter.get(
