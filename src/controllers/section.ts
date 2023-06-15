@@ -9,7 +9,7 @@ import { AuthRequest } from "../types/request";
 
 const createSection = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "description", "quantity", "unit", "boqId"],
+    body: ["name", "boqId"],
   });
 
   const { error, value } = sectionValidators.create.validate(body);
@@ -26,7 +26,7 @@ const createSection = asyncHandler(async (req: AuthRequest, res) => {
 
 const updateSection = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "description", "quantity", "unit", "boqId"],
+    body: ["name", "boqId"],
   });
   const params = clean.request(req, { params: ["id"] });
 
@@ -93,7 +93,7 @@ const getAll = asyncHandler(async (req: AuthRequest, res) => {
   res.status(200).send(SuccessResponse(sections));
 });
 
-const boqController = {
+const sectionController = {
   createSection,
   updateSection,
   removeSection,
@@ -103,4 +103,4 @@ const boqController = {
   restoreSection,
 };
 
-export default boqController;
+export default sectionController;

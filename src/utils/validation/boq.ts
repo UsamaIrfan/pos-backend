@@ -4,15 +4,7 @@ const create = Joi.object().keys({
   name: Joi.string()
     .required()
     .messages({ "any.required": "Name is required" }),
-  description: Joi.string()
-    .required()
-    .messages({ "any.required": "Description is required" }),
-  quantity: Joi.number()
-    .required()
-    .messages({ "any.required": "Quantity is required" }),
-  unit: Joi.string()
-    .required()
-    .messages({ "any.required": "Unit is required" }),
+  description: Joi.string().required(),
   tenderId: Joi.number()
     .required()
     .messages({ "any.required": "Tender ID is required" }),

@@ -9,6 +9,7 @@ import { EmailOtp } from "./emailOtp";
 import { ErrorLog } from "./errorLogs";
 import { ResetPasswordToken } from "./resetPasswordToken";
 import { Section } from "./section";
+import { SectionItem } from "./sectionItem";
 import { Tender } from "./tender";
 import { User } from "./user";
 
@@ -30,6 +31,7 @@ export const AppDataSource = new DataSource({
     Tender,
     BOQ,
     Section,
+    SectionItem,
   ],
   migrations: [],
   subscribers: [],
@@ -44,3 +46,4 @@ export const companyRepository = AppDataSource.getRepository(Company);
 export const tenderRepository = AppDataSource.getRepository(Tender);
 export const boqRepository = AppDataSource.getRepository(BOQ);
 export const sectionRepository = AppDataSource.getRepository(Section);
+export const sectionItemRepository = AppDataSource.getRepository(SectionItem);

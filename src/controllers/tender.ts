@@ -99,6 +99,7 @@ const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
   const data = await tenderService.paginate({
     page: query?.page,
     limit: query?.limit,
+    relations: ["boqs"],
     where: {
       ...(query?.companyId ? { companyId: query?.companyId } : {}),
     },

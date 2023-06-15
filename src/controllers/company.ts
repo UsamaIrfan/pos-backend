@@ -19,14 +19,14 @@ const createCompany = asyncHandler(async (req: AuthRequest, res) => {
     throw new HttpException(error.message, 400);
   }
 
-  const { error: companyError, company } = await companyService.create({
+  const { error: companyError, user } = await companyService.create({
     ...value,
-    user: req?.user?.id,
+    userId: req?.user?.id,
   });
   if (companyError) {
     throw new HttpException(companyError?.message, 500);
   }
-  res.status(200).send(SuccessResponse(company));
+  res.status(200).send(SuccessResponse(user));
 });
 
 const updateCompany = asyncHandler(async (req: AuthRequest, res) => {

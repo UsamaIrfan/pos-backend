@@ -9,7 +9,7 @@ import { AuthRequest } from "../types/request";
 
 const createBoq = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "description", "quantity", "unit", "tenderId"],
+    body: ["name", "description", "tenderId"],
   });
 
   const { error, value } = boqValidators.create.validate(body);
@@ -29,7 +29,7 @@ const createBoq = asyncHandler(async (req: AuthRequest, res) => {
 
 const updateBoq = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "description", "quantity", "unit", "tenderId"],
+    body: ["name", "description", "tenderId"],
   });
   const params = clean.request(req, { params: ["id"] });
 

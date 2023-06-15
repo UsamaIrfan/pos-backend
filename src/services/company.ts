@@ -11,7 +11,7 @@ const create = async (companyData: Company) => {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
   const user = await queryRunner.manager.findOne(User, {
-    where: { id: companyData?.id },
+    where: { id: companyData?.userId },
     relations: ["company"],
   });
   if (!user) throw new HttpException("User not found", 404);
@@ -19,13 +19,17 @@ const create = async (companyData: Company) => {
   if (user?.company?.[0]?.id) {
     throw new HttpException("Can only have one company at a time", 409);
   }
-  let dbCompany: Company | null;
+  let dbUser: User | null;
   let error: any;
   await queryRunner.startTransaction();
   try {
     const company = queryRunner.manager.create(Company, companyData);
-    const savedCompany = await queryRunner.manager.save(Company, company);
-    dbCompany = savedCompany;
+    await queryRunner.manager.save(Company, company);
+    const user = await queryRunner.manager.findOne(User, {
+      where: { id: companyData?.id },
+      relations: ["company"],
+    });
+    dbUser = user;
     await queryRunner.commitTransaction();
   } catch (err) {
     error = err;
@@ -33,7 +37,7 @@ const create = async (companyData: Company) => {
   } finally {
     await queryRunner.release();
   }
-  return { error, company: dbCompany };
+  return { error, user: dbUser };
 };
 
 const update = async (id: number, updateCompanyObj: Partial<Company>) => {

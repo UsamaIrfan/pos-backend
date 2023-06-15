@@ -4,38 +4,37 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Section } from "./section";
-import { Tender } from "./tender";
 
 @Entity()
-export class BOQ {
+export class SectionItem {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   description: string;
 
-  @ManyToOne(() => Tender, (tender) => tender.boqs, {
-    onDelete: "CASCADE",
-  })
-  tender: Tender;
+  @Column({ nullable: true })
+  quantity: number;
 
   @Column()
-  tenderId: number;
+  price: number;
 
-  @OneToMany(() => Section, (section) => section.boq, {
-    onDelete: "CASCADE",
-    eager: true,
-  })
-  sections: Section[];
+  @Column()
+  unit: string;
+
+  @ManyToOne(() => Section, (section) => section.sectionItems)
+  section: Section;
+
+  @Column()
+  sectionId: number;
 
   @CreateDateColumn()
   createdAt: Date;

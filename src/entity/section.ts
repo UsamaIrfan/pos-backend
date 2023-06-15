@@ -4,11 +4,13 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { BOQ } from "./boq";
+import { SectionItem } from "./sectionItem";
 
 @Entity()
 export class Section {
@@ -18,15 +20,6 @@ export class Section {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
-  description: string;
-
-  @Column({ nullable: true })
-  quantity: number;
-
-  @Column({ nullable: true })
-  unit: string;
-
   @ManyToOne(() => BOQ, (boq) => boq.sections, {
     onDelete: "CASCADE",
   })
@@ -34,6 +27,12 @@ export class Section {
 
   @Column()
   boqId: number;
+
+  @OneToMany(() => SectionItem, (sectionItem) => sectionItem.section, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  sectionItems: SectionItem[];
 
   @CreateDateColumn()
   createdAt: Date;
