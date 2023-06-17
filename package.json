@@ -1,6 +1,6 @@
 {
   "name": "procurement-backend",
-  "version": "1.0.0",
+  "version": "5.8.2",
   "description": "A procurement API system",
   "main": "index.js",
   "scripts": {
