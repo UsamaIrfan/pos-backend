@@ -77,10 +77,11 @@ const getById = asyncHandler(async (req, res) => {
 });
 
 const get = asyncHandler(async (req, res) => {
-  const query = clean.request(req, { query: ["tenderId"] });
+  const query = clean.request(req, { query: ["tenderId", "companyId"] });
 
   const boq = await boqService.find({
     ...(query?.tenderId ? { tenderId: query?.tenderId } : {}),
+    ...(query?.companyId ? { companyId: query?.companyId } : {}),
   });
 
   res.status(200).send(SuccessResponse(boq));

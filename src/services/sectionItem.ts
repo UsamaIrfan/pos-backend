@@ -1,5 +1,3 @@
-import { FindOptionsWhere } from "typeorm";
-
 import { Section } from "../entity/section";
 import { SectionItem } from "../entity/sectionItem";
 
@@ -59,11 +57,27 @@ const findOne = async (id: number) => {
   });
 };
 
-const find = async (options: FindOptionsWhere<SectionItem>) => {
-  return await sectionItemRepository.find({
-    where: options,
-    relations: ["section"],
-  });
+const find = async (options?: {
+  sectionId?: number;
+  boqId?: number;
+  tenderId?: number;
+  companyId?: number;
+}) => {
+  const query = sectionItemRepository
+    .createQueryBuilder("sectionItem")
+    .leftJoinAndSelect("sectionItem.section", "section")
+    .leftJoinAndSelect("section.boq", "boq")
+    .leftJoinAndSelect("boq.tender", "tender")
+    .where(
+      options?.sectionId ? `sectionItem.sectionId = ${options?.sectionId}` : ""
+    );
+
+  if (options?.sectionId) query.andWhere(`section.boqId = ${options?.boqId}`);
+  if (options?.tenderId) query.andWhere(`boq.tenderId = ${options?.tenderId}`);
+  if (options?.companyId)
+    query.andWhere(`tender.companyId = ${options?.companyId}`);
+
+  return await query.getMany();
 };
 
 const paginate = async ({

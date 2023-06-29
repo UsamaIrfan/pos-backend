@@ -1,5 +1,3 @@
-import { FindOptionsWhere } from "typeorm";
-
 import { BOQ } from "../entity/boq";
 
 import { AppDataSource, boqRepository } from "../entity";
@@ -44,11 +42,20 @@ const findOne = async (id: number) => {
   });
 };
 
-const find = async (options: FindOptionsWhere<BOQ>) => {
-  return await boqRepository.find({
-    where: options,
-    relations: ["tender"],
-  });
+const find = async (options?: { tenderId?: number; companyId?: number }) => {
+  const query = boqRepository
+    .createQueryBuilder("boq")
+    .leftJoinAndSelect("boq.tender", "tender");
+
+  if (options.companyId) {
+    query.where(`tender.companyId = ${options?.companyId}`);
+  }
+
+  if (options.tenderId) {
+    query.andWhere(`boq.tenderId = ${options?.tenderId}`);
+  }
+
+  return await query.getMany();
 };
 
 const tenderService = {

@@ -74,10 +74,15 @@ const getById = asyncHandler(async (req, res) => {
 });
 
 const get = asyncHandler(async (req, res) => {
-  const query = clean.request(req, { query: ["sectionId"] });
+  const query = clean.request(req, {
+    query: ["sectionId", "companyId", "tenderId", "boqId"],
+  });
 
   const section = await sectionItemService.find({
     ...(query?.sectionId ? { sectionId: query?.sectionId } : {}),
+    ...(query?.companyId ? { companyId: query?.companyId } : {}),
+    ...(query?.tenderId ? { tenderId: query?.tenderId } : {}),
+    ...(query?.boqId ? { boqId: query?.boqId } : {}),
   });
 
   res.status(200).send(SuccessResponse(section));

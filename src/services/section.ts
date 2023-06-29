@@ -1,5 +1,3 @@
-import { FindOptionsWhere } from "typeorm";
-
 import { Section } from "../entity/section";
 
 import { HttpException } from "./../utils/response";
@@ -49,11 +47,26 @@ const findOne = async (id: number) => {
   });
 };
 
-const find = async (options: FindOptionsWhere<Section>) => {
-  return await sectionRepository.find({
-    where: options,
-    relations: ["boq"],
-  });
+const find = async (options?: {
+  boqId?: number;
+  tenderId?: number;
+  companyId?: number;
+}) => {
+  const query = sectionRepository
+    .createQueryBuilder("section")
+    .leftJoinAndSelect("section.boq", "boq")
+    .leftJoinAndSelect("boq.tender", "tender")
+    .where(options?.boqId ? `section.boqId = ${options.boqId}` : "");
+
+  if (options.tenderId) {
+    query.andWhere(`boq.tenderId = ${options?.tenderId}`);
+  }
+
+  if (options.companyId) {
+    query.andWhere(`tender.companyId = ${options?.companyId}`);
+  }
+
+  return await query.getMany();
 };
 
 const sectionService = {
