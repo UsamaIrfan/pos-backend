@@ -72,7 +72,7 @@ const find = async (options?: {
       options?.sectionId ? `sectionItem.sectionId = ${options?.sectionId}` : ""
     );
 
-  if (options?.sectionId) query.andWhere(`section.boqId = ${options?.boqId}`);
+  if (options?.boqId) query.andWhere(`section.boqId = ${options?.boqId}`);
   if (options?.tenderId) query.andWhere(`boq.tenderId = ${options?.tenderId}`);
   if (options?.companyId)
     query.andWhere(`tender.companyId = ${options?.companyId}`);

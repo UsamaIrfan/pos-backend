@@ -26,7 +26,7 @@ const create = async (companyData: Company) => {
     const company = queryRunner.manager.create(Company, companyData);
     await queryRunner.manager.save(Company, company);
     const user = await queryRunner.manager.findOne(User, {
-      where: { id: companyData?.id },
+      where: { id: companyData?.userId },
       relations: ["company"],
     });
     dbUser = user;
