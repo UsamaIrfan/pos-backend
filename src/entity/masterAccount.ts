@@ -5,25 +5,25 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-import { BOQ } from "./boq";
+import { ACCOUNT_TYPES } from "../utils/enums";
+
 import { Company } from "./company";
 import { User } from "./user";
 
 @Entity()
-export class Tender {
+export class MasterAccount {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
-  @Column()
-  description: string;
+  @Column({ unique: true, enumName: "accountType", enum: ACCOUNT_TYPES })
+  type: ACCOUNT_TYPES;
 
   @ManyToOne(() => Company, (company) => company.tenders, {
     onDelete: "CASCADE",
@@ -33,12 +33,6 @@ export class Tender {
 
   @Column()
   companyId: number;
-
-  @OneToMany(() => BOQ, (boq) => boq.tender, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn()
-  boqs: BOQ[];
 
   @ManyToOne(() => User, (user) => user.tenders, { onDelete: "CASCADE" })
   @JoinColumn()

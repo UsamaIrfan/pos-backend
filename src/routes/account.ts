@@ -1,56 +1,56 @@
 import express from "express";
 
-import tenderController from "../controllers/tender";
+import accountController from "../controllers/account";
 
 import authenticate from "../middlewares/auth";
 
 import { ROLES } from "../utils/enums";
 
-const tenderRouter = express.Router();
+const accountRouter = express.Router();
 
 // Create
-tenderRouter.post(
+accountRouter.post(
   "/",
   authenticate([ROLES.COMPANY_OWNER]),
-  tenderController.createTender
+  accountController.createAccount
 );
 
 // Get (Only Active)
-tenderRouter.get("/", authenticate(), tenderController.getPaginated);
+accountRouter.get("/", authenticate(), accountController.getPaginated);
 
 // Get (All)
-tenderRouter.get(
+accountRouter.get(
   "/all",
   authenticate([ROLES.SUPER_ADMIN, ROLES.COMPANY_OWNER]),
-  tenderController.getAll
+  accountController.getAll
 );
 
 // Get One By Id
-tenderRouter.get(
+accountRouter.get(
   "/:id",
   authenticate([ROLES.SUPER_ADMIN, ROLES.COMPANY_OWNER]),
-  tenderController.getById
+  accountController.getById
 );
 
 // Update One by Id
-tenderRouter.put(
+accountRouter.put(
   "/:id",
   authenticate([ROLES.COMPANY_OWNER]),
-  tenderController.updateTender
+  accountController.updateAccount
 );
 
 // Soft delete One by Id
-tenderRouter.delete(
+accountRouter.delete(
   "/:id",
   authenticate([ROLES.SUPER_ADMIN, ROLES.COMPANY_OWNER]),
-  tenderController.removeTender
+  accountController.removeAccount
 );
 
 // Soft delete One by Id
-tenderRouter.put(
+accountRouter.put(
   "/:id/restore",
   authenticate([ROLES.SUPER_ADMIN]),
-  tenderController.restoreTender
+  accountController.restoreTender
 );
 
-export default tenderRouter;
+export default accountRouter;

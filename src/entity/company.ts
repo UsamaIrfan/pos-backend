@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { Tender } from "./tender";
+import { Account } from "./account";
 import { User } from "./user";
 
 @Entity()
@@ -35,8 +35,10 @@ export class Company {
   @ManyToOne(() => User, (user) => user.company, { onDelete: "SET NULL" })
   user: User;
 
-  @OneToMany(() => Tender, (tender) => tender.company, { onDelete: "SET NULL" })
-  tenders: Tender[];
+  @OneToMany(() => Account, (tender) => tender.company, {
+    onDelete: "SET NULL",
+  })
+  tenders: Account[];
 
   @Column({ nullable: true })
   userId: number;

@@ -1,9 +1,9 @@
 import Joi from "joi";
 
 const create = Joi.object().keys({
-  name: Joi.string()
+  title: Joi.string()
     .required()
-    .messages({ "any.required": "Name is required" }),
+    .messages({ "any.required": "Title is required" }),
   description: Joi.string()
     .required()
     .messages({ "any.required": "Description is required" }),
@@ -13,13 +13,13 @@ const create = Joi.object().keys({
 });
 
 const update = Joi.object().keys({
-  name: Joi.string(),
+  title: Joi.string(),
   description: Joi.string(),
 });
 
-const tenderValidators = {
+const accountValidators = {
   create,
   update,
 };
 
-export default tenderValidators;
+export default accountValidators;

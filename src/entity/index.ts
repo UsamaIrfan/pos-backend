@@ -3,14 +3,12 @@ import "reflect-metadata";
 
 import appConfig from "../config/appConfig";
 
-import { BOQ } from "./boq";
+import { Account as Account } from "./account";
 import { Company } from "./company";
 import { EmailOtp } from "./emailOtp";
 import { ErrorLog } from "./errorLogs";
+import { MasterAccount } from "./masterAccount";
 import { ResetPasswordToken } from "./resetPasswordToken";
-import { Section } from "./section";
-import { SectionItem } from "./sectionItem";
-import { Tender } from "./tender";
 import { User } from "./user";
 
 export const AppDataSource = new DataSource({
@@ -28,10 +26,8 @@ export const AppDataSource = new DataSource({
     EmailOtp,
     ResetPasswordToken,
     Company,
-    Tender,
-    BOQ,
-    Section,
-    SectionItem,
+    Account,
+    MasterAccount,
   ],
   migrations: [],
   subscribers: [],
@@ -43,7 +39,6 @@ export const emailOtpRepository = AppDataSource.getRepository(EmailOtp);
 export const resetPassTokenRepository =
   AppDataSource.getRepository(ResetPasswordToken);
 export const companyRepository = AppDataSource.getRepository(Company);
-export const tenderRepository = AppDataSource.getRepository(Tender);
-export const boqRepository = AppDataSource.getRepository(BOQ);
-export const sectionRepository = AppDataSource.getRepository(Section);
-export const sectionItemRepository = AppDataSource.getRepository(SectionItem);
+export const accountRepository = AppDataSource.getRepository(Account);
+export const masterAccountRepository =
+  AppDataSource.getRepository(MasterAccount);
