@@ -9,9 +9,18 @@ import { AuthRequest } from "../types/request";
 
 const createAccount = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["title", "description", "companyId"],
+    body: [
+      "title",
+      "description",
+      "itemType",
+      "accountTypeId",
+      "companyId",
+      "price",
+      "quantity",
+    ],
   });
 
+  console.log(body);
   const { error, value } = accountValidators.create.validate(body);
 
   if (error) {
@@ -27,7 +36,14 @@ const createAccount = asyncHandler(async (req: AuthRequest, res) => {
 
 const updateAccount = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["title", "description"],
+    body: [
+      "title",
+      "description",
+      "accountTypeId",
+      "itemType",
+      "price",
+      "quantity",
+    ],
   });
   const params = clean.request(req, { params: ["id"] });
 
@@ -96,7 +112,6 @@ const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
   const data = await accountService.paginate({
     page: query?.page,
     limit: query?.limit,
-    relations: ["boqs"],
     where: {
       ...(query?.companyId ? { companyId: query?.companyId } : {}),
     },

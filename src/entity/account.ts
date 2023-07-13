@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
+import { ITEM_TYPES } from "../utils/enums";
+
 import { Company } from "./company";
 import { MasterAccount } from "./masterAccount";
 import { User } from "./user";
@@ -23,6 +25,9 @@ export class Account {
 
   @Column()
   description: string;
+
+  @Column({ unique: true, enumName: "itemType", enum: ITEM_TYPES })
+  itemType: ITEM_TYPES;
 
   @ManyToOne(() => Company, (company) => company.tenders, {
     onDelete: "CASCADE",
@@ -41,6 +46,12 @@ export class Account {
 
   @Column()
   accountTypeId: number;
+
+  @Column()
+  price: number;
+
+  @Column()
+  quantity: number;
 
   @ManyToOne(() => User, (user) => user.tenders, { onDelete: "CASCADE" })
   @JoinColumn()

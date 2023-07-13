@@ -9,6 +9,7 @@ import { EmailOtp } from "./emailOtp";
 import { ErrorLog } from "./errorLogs";
 import { MasterAccount } from "./masterAccount";
 import { ResetPasswordToken } from "./resetPasswordToken";
+import { ItemTransaction } from "./transaction";
 import { User } from "./user";
 
 export const AppDataSource = new DataSource({
@@ -28,6 +29,7 @@ export const AppDataSource = new DataSource({
     Company,
     Account,
     MasterAccount,
+    ItemTransaction,
   ],
   migrations: [],
   subscribers: [],
@@ -42,3 +44,5 @@ export const companyRepository = AppDataSource.getRepository(Company);
 export const accountRepository = AppDataSource.getRepository(Account);
 export const masterAccountRepository =
   AppDataSource.getRepository(MasterAccount);
+export const itemTransactionRepository =
+  AppDataSource.getRepository(ItemTransaction);

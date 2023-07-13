@@ -1,5 +1,7 @@
 import Joi from "joi";
 
+import { ITEM_TYPES } from "../enums";
+
 const create = Joi.object().keys({
   title: Joi.string()
     .required()
@@ -7,7 +9,20 @@ const create = Joi.object().keys({
   description: Joi.string()
     .required()
     .messages({ "any.required": "Description is required" }),
+  itemType: Joi.string()
+    .valid(ITEM_TYPES.CREDIT, ITEM_TYPES.DEBIT)
+    .required()
+    .messages({ "any.required": "Description is required" }),
+  accountTypeId: Joi.number()
+    .required()
+    .messages({ "any.required": "Account type is required" }),
   companyId: Joi.number()
+    .required()
+    .messages({ "any.required": "Company ID is required" }),
+  price: Joi.number()
+    .required()
+    .messages({ "any.required": "Price is required" }),
+  quantity: Joi.number()
     .required()
     .messages({ "any.required": "Company ID is required" }),
 });
@@ -15,6 +30,10 @@ const create = Joi.object().keys({
 const update = Joi.object().keys({
   title: Joi.string(),
   description: Joi.string(),
+  accountTypeId: Joi.number(),
+  itemType: Joi.string().valid(ITEM_TYPES.CREDIT, ITEM_TYPES.DEBIT),
+  price: Joi.number(),
+  quantity: Joi.number(),
 });
 
 const accountValidators = {

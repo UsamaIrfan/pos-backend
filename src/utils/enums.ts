@@ -13,3 +13,8 @@ export enum ACCOUNT_TYPES {
   CAPITAL = "CAPITAL",
   DEPRECIATION = "DEPRECIATION",
 }
+
+export enum ITEM_TYPES {
+  DEBIT = "DEBIT",
+  CREDIT = "CREDIT",
+}

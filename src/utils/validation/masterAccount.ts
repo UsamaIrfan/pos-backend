@@ -23,7 +23,7 @@ const create = Joi.object().keys({
 });
 
 const update = Joi.object().keys({
-  title: Joi.string(),
+  name: Joi.string(),
   type: Joi.string().valid(
     ACCOUNT_TYPES.ASSET,
     ACCOUNT_TYPES.CAPITAL,

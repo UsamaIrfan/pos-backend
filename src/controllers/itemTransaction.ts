@@ -1,49 +1,49 @@
-import masterAccountService from "../services/masterAccount";
+import itemTransactionService from "../services/itemTransaction";
 
 import asyncHandler from "../utils/asyncHandler";
 import clean from "../utils/clean";
 import { HttpException, SuccessResponse } from "../utils/response";
-import masterAccountValidators from "../utils/validation/masterAccount";
+import itemTransactionValidators from "../utils/validation/itemTransaction";
 
 import { AuthRequest } from "../types/request";
 
-const createMasterAccount = asyncHandler(async (req: AuthRequest, res) => {
+const createItemTransaction = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "type", "companyId"],
+    body: ["salePrice", "saleQuantity", "itemId"],
   });
 
-  const { error, value } = masterAccountValidators.create.validate(body);
+  const { error, value } = itemTransactionValidators.create.validate(body);
 
   if (error) {
     throw new HttpException(error.message, 400);
   }
 
-  const { masterAccount } = await masterAccountService.create({
+  const { itemTransaction } = await itemTransactionService.create({
     ...value,
     createdById: req?.user?.id,
   });
-  res.status(200).send(SuccessResponse(masterAccount));
+  res.status(200).send(SuccessResponse(itemTransaction));
 });
 
-const updateMasterAccount = asyncHandler(async (req: AuthRequest, res) => {
+const updateItemTransaction = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["name", "type"],
+    body: ["salePrice", "saleQuantity", "itemId"],
   });
   const params = clean.request(req, { params: ["id"] });
 
-  const { error, value } = masterAccountValidators.update.validate(body);
+  const { error, value } = itemTransactionValidators.update.validate(body);
 
   if (error) {
     throw new HttpException(error.message, 400);
   }
 
-  const updated = await masterAccountService.update(params?.id, value);
+  const updated = await itemTransactionService.update(params?.id, value);
   res.status(200).send(SuccessResponse(updated));
 });
 
-const removeMasterAccount = asyncHandler(async (req, res) => {
+const removeItemTransaction = asyncHandler(async (req, res) => {
   const params = clean.request(req, { params: ["id"] });
-  const removed = await masterAccountService.remove(params?.id);
+  const removed = await itemTransactionService.remove(params?.id);
 
   if (!removed) {
     throw new HttpException("Unable to remove master account", 400);
@@ -52,9 +52,9 @@ const removeMasterAccount = asyncHandler(async (req, res) => {
   res.status(200).send(SuccessResponse(removed));
 });
 
-const restoreTender = asyncHandler(async (req, res) => {
+const restoreItemTransaction = asyncHandler(async (req, res) => {
   const params = clean.request(req, { params: ["id"] });
-  const restored = await masterAccountService.restore(params?.id);
+  const restored = await itemTransactionService.restore(params?.id);
 
   if (!restored) {
     throw new HttpException("Unable to restore master account", 400);
@@ -65,7 +65,7 @@ const restoreTender = asyncHandler(async (req, res) => {
 
 const getById = asyncHandler(async (req, res) => {
   const params = clean.request(req, { params: ["id"] });
-  const tender = await masterAccountService.findOne(params?.id);
+  const tender = await itemTransactionService.findOne(params?.id);
 
   if (!tender) {
     throw new HttpException("Master account not found", 400);
@@ -75,29 +75,29 @@ const getById = asyncHandler(async (req, res) => {
 });
 
 const get = asyncHandler(async (_req, res) => {
-  const tender = await masterAccountService.find({});
+  const tender = await itemTransactionService.find({});
 
   res.status(200).send(SuccessResponse(tender));
 });
 
 const getAll = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId"] });
+  const query = clean.request(req, { query: ["itemId"] });
 
-  const tenders = await masterAccountService.find({
-    ...(query?.companyId ? { companyId: query?.companyId } : {}),
+  const tenders = await itemTransactionService.find({
+    ...(query?.itemId ? { itemId: query?.itemId } : {}),
   });
 
   res.status(200).send(SuccessResponse(tenders));
 });
 
 const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId", "page", "limit"] });
+  const query = clean.request(req, { query: ["itemId", "page", "limit"] });
 
-  const data = await masterAccountService.paginate({
+  const data = await itemTransactionService.paginate({
     page: query?.page,
     limit: query?.limit,
     where: {
-      ...(query?.companyId ? { companyId: query?.companyId } : {}),
+      ...(query?.itemId ? { itemId: query?.itemId } : {}),
     },
   });
 
@@ -105,13 +105,13 @@ const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
 });
 
 const accountController = {
-  createMasterAccount,
-  updateMasterAccount,
-  removeMasterAccount,
+  createItemTransaction,
+  updateItemTransaction,
+  removeItemTransaction,
   getById,
   get,
   getAll,
-  restoreTender,
+  restoreItemTransaction,
   getPaginated,
 };
 
