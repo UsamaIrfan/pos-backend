@@ -8,12 +8,14 @@ const create = Joi.object().keys({
     .messages({ "any.required": "Name is required" }),
   type: Joi.string()
     .valid(
+      ACCOUNT_TYPES.INVENTORY,
       ACCOUNT_TYPES.ASSET,
       ACCOUNT_TYPES.CAPITAL,
       ACCOUNT_TYPES.DEPRECIATION,
       ACCOUNT_TYPES.LIABILITY,
       ACCOUNT_TYPES.LOSS,
-      ACCOUNT_TYPES.REVENUE
+      ACCOUNT_TYPES.REVENUE,
+      ACCOUNT_TYPES.EXPENSE
     )
     .required()
     .messages({ "any.required": "Type is required" }),
@@ -25,12 +27,14 @@ const create = Joi.object().keys({
 const update = Joi.object().keys({
   name: Joi.string(),
   type: Joi.string().valid(
+    ACCOUNT_TYPES.INVENTORY,
     ACCOUNT_TYPES.ASSET,
     ACCOUNT_TYPES.CAPITAL,
     ACCOUNT_TYPES.DEPRECIATION,
     ACCOUNT_TYPES.LIABILITY,
     ACCOUNT_TYPES.LOSS,
-    ACCOUNT_TYPES.REVENUE
+    ACCOUNT_TYPES.REVENUE,
+    ACCOUNT_TYPES.EXPENSE
   ),
 });
 

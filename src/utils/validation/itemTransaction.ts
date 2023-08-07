@@ -1,20 +1,21 @@
 import Joi from "joi";
 
 const create = Joi.object().keys({
-  salePrice: Joi.number()
+  amount: Joi.number()
     .required()
     .messages({ "any.required": "Sale price is required" }),
-  saleQuantity: Joi.number()
-    .required()
-    .messages({ "any.required": "Sale quantity is required" }),
+  quantity: Joi.number(),
   itemId: Joi.number()
     .required()
     .messages({ "any.required": "Item ID is required" }),
+  companyId: Joi.number()
+    .required()
+    .messages({ "any.required": "Company ID is required" }),
 });
 
 const update = Joi.object().keys({
-  salePrice: Joi.number(),
-  saleQuantity: Joi.number(),
+  amount: Joi.number(),
+  quantity: Joi.number(),
   itemId: Joi.number(),
 });
 

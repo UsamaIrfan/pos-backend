@@ -65,13 +65,13 @@ const restoreTender = asyncHandler(async (req, res) => {
 
 const getById = asyncHandler(async (req, res) => {
   const params = clean.request(req, { params: ["id"] });
-  const tender = await masterAccountService.findOne(params?.id);
+  const masterAccount = await masterAccountService.findOne(params?.id);
 
-  if (!tender) {
+  if (!masterAccount) {
     throw new HttpException("Master account not found", 400);
   }
 
-  res.status(200).send(SuccessResponse(tender));
+  res.status(200).send(SuccessResponse(masterAccount));
 });
 
 const get = asyncHandler(async (_req, res) => {
@@ -81,24 +81,17 @@ const get = asyncHandler(async (_req, res) => {
 });
 
 const getAll = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId"] });
+  const masterAccounts = await masterAccountService.find({});
 
-  const tenders = await masterAccountService.find({
-    ...(query?.companyId ? { companyId: query?.companyId } : {}),
-  });
-
-  res.status(200).send(SuccessResponse(tenders));
+  res.status(200).send(SuccessResponse(masterAccounts));
 });
 
 const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId", "page", "limit"] });
+  const query = clean.request(req, { query: ["page", "limit"] });
 
   const data = await masterAccountService.paginate({
     page: query?.page,
     limit: query?.limit,
-    where: {
-      ...(query?.companyId ? { companyId: query?.companyId } : {}),
-    },
   });
 
   res.status(200).send(SuccessResponse(data));

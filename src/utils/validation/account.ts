@@ -9,6 +9,7 @@ const create = Joi.object().keys({
   description: Joi.string()
     .required()
     .messages({ "any.required": "Description is required" }),
+  isCurrent: Joi.boolean().default(false),
   itemType: Joi.string()
     .valid(ITEM_TYPES.CREDIT, ITEM_TYPES.DEBIT)
     .required()
@@ -22,17 +23,18 @@ const create = Joi.object().keys({
   price: Joi.number()
     .required()
     .messages({ "any.required": "Price is required" }),
-  quantity: Joi.number()
-    .required()
-    .messages({ "any.required": "Company ID is required" }),
+  salePrice: Joi.number(),
+  quantity: Joi.number(),
 });
 
 const update = Joi.object().keys({
   title: Joi.string(),
   description: Joi.string(),
+  isCurrent: Joi.boolean(),
   accountTypeId: Joi.number(),
   itemType: Joi.string().valid(ITEM_TYPES.CREDIT, ITEM_TYPES.DEBIT),
   price: Joi.number(),
+  salePrice: Joi.number(),
   quantity: Joi.number(),
 });
 

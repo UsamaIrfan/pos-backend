@@ -1,7 +1,6 @@
 import { FindOptionsWhere } from "typeorm";
 
 import { MasterAccount } from "../entity/masterAccount";
-import { User } from "../entity/user";
 
 import commonUtils from "../utils/common";
 import { HttpException } from "../utils/response";
@@ -10,14 +9,9 @@ import { PaginationParams } from "../types/app";
 
 import { AppDataSource, masterAccountRepository } from "../entity";
 
-const create = async (masterAccountData: MasterAccount) => {
+const create = async (masterAccountData: Partial<MasterAccount>) => {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
-  const user = await queryRunner.manager.findOne(User, {
-    where: { id: masterAccountData?.id },
-    relations: ["company"],
-  });
-  if (!user) throw new HttpException("User not found", 404);
 
   let dbMasterAccount: MasterAccount | null;
   let error: any;
@@ -60,14 +54,12 @@ const restore = async (id: number) => {
 const findOne = async (id: number) => {
   return await masterAccountRepository.findOne({
     where: { id },
-    relations: ["createdBy", "company"],
   });
 };
 
 const find = async (options: FindOptionsWhere<MasterAccount>) => {
   return await masterAccountRepository.find({
     where: options,
-    relations: ["createdBy", "company"],
   });
 };
 

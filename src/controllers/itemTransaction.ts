@@ -7,9 +7,30 @@ import itemTransactionValidators from "../utils/validation/itemTransaction";
 
 import { AuthRequest } from "../types/request";
 
+const createInvestmentTransaction = asyncHandler(
+  async (req: AuthRequest, res) => {
+    const body = clean.request(req, {
+      body: ["amount", "itemId", "companyId"],
+    });
+
+    const { error, value } = itemTransactionValidators.create.validate(body);
+
+    if (error) {
+      throw new HttpException(error.message, 400);
+    }
+
+    const { itemTransaction } =
+      await itemTransactionService.createInvestmentTransaction({
+        ...value,
+        createdById: req?.user?.id,
+      });
+    res.status(200).send(SuccessResponse(itemTransaction));
+  }
+);
+
 const createItemTransaction = asyncHandler(async (req: AuthRequest, res) => {
   const body = clean.request(req, {
-    body: ["salePrice", "saleQuantity", "itemId"],
+    body: ["amount", "quantity", "itemId", "companyId"],
   });
 
   const { error, value } = itemTransactionValidators.create.validate(body);
@@ -106,6 +127,7 @@ const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
 
 const accountController = {
   createItemTransaction,
+  createInvestmentTransaction,
   updateItemTransaction,
   removeItemTransaction,
   getById,

@@ -10,7 +10,6 @@ import {
 
 import { ROLES } from "../utils/enums";
 
-import { Account } from "./account";
 import { Company } from "./company";
 import { ErrorLog } from "./errorLogs";
 
@@ -45,12 +44,6 @@ export class User {
     nullable: true,
   })
   company: Company[];
-
-  @OneToMany(() => Account, (tender) => tender.createdBy, {
-    onDelete: "SET NULL",
-    nullable: true,
-  })
-  tenders: Account[];
 
   @Column({
     type: "enum",

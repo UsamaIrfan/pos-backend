@@ -15,6 +15,12 @@ itemTransactionRouter.post(
   itemTransactionController.createItemTransaction
 );
 
+itemTransactionRouter.post(
+  "/invest",
+  authenticate([ROLES.COMPANY_OWNER]),
+  itemTransactionController.createInvestmentTransaction
+);
+
 // Get (Only Active)
 itemTransactionRouter.get(
   "/",

@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -13,7 +14,7 @@ import { ITEM_TYPES } from "../utils/enums";
 
 import { Company } from "./company";
 import { MasterAccount } from "./masterAccount";
-import { User } from "./user";
+import { ItemTransaction } from "./transaction";
 
 @Entity()
 export class Account {
@@ -23,13 +24,13 @@ export class Account {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column({ unique: true, enumName: "itemType", enum: ITEM_TYPES })
+  @Column({ enumName: "itemType", enum: ITEM_TYPES })
   itemType: ITEM_TYPES;
 
-  @ManyToOne(() => Company, (company) => company.tenders, {
+  @ManyToOne(() => Company, {
     onDelete: "CASCADE",
   })
   @JoinColumn()
@@ -37,6 +38,9 @@ export class Account {
 
   @Column()
   companyId: number;
+
+  @Column({ nullable: true })
+  isCurrent: boolean;
 
   @ManyToOne(() => MasterAccount, {
     onDelete: "CASCADE",
@@ -50,15 +54,20 @@ export class Account {
   @Column()
   price: number;
 
-  @Column()
+  @Column({ nullable: true })
+  salePrice: number;
+
+  @Column({ nullable: true })
   quantity: number;
 
-  @ManyToOne(() => User, (user) => user.tenders, { onDelete: "CASCADE" })
+  @OneToMany(() => ItemTransaction, (transaction) => transaction.item, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
-  createdBy: User;
+  transactions: ItemTransaction[];
 
-  @Column()
-  createdById: number;
+  @Column({ default: false })
+  cashAccount: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

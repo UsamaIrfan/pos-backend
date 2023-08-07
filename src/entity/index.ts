@@ -8,6 +8,8 @@ import { Company } from "./company";
 import { EmailOtp } from "./emailOtp";
 import { ErrorLog } from "./errorLogs";
 import { MasterAccount } from "./masterAccount";
+import { Order } from "./order";
+import { OrderItem } from "./orderItem";
 import { ResetPasswordToken } from "./resetPasswordToken";
 import { ItemTransaction } from "./transaction";
 import { User } from "./user";
@@ -30,6 +32,8 @@ export const AppDataSource = new DataSource({
     Account,
     MasterAccount,
     ItemTransaction,
+    OrderItem,
+    Order,
   ],
   migrations: [],
   subscribers: [],
@@ -46,3 +50,5 @@ export const masterAccountRepository =
   AppDataSource.getRepository(MasterAccount);
 export const itemTransactionRepository =
   AppDataSource.getRepository(ItemTransaction);
+export const orderItemRepository = AppDataSource.getRepository(OrderItem);
+export const orderRepository = AppDataSource.getRepository(Order);

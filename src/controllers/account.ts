@@ -12,15 +12,16 @@ const createAccount = asyncHandler(async (req: AuthRequest, res) => {
     body: [
       "title",
       "description",
+      "isCurrent",
       "itemType",
       "accountTypeId",
       "companyId",
       "price",
+      "salePrice",
       "quantity",
     ],
   });
 
-  console.log(body);
   const { error, value } = accountValidators.create.validate(body);
 
   if (error) {
@@ -39,9 +40,11 @@ const updateAccount = asyncHandler(async (req: AuthRequest, res) => {
     body: [
       "title",
       "description",
+      "isCurrent",
       "accountTypeId",
       "itemType",
       "price",
+      "salePrice",
       "quantity",
     ],
   });
@@ -57,9 +60,16 @@ const updateAccount = asyncHandler(async (req: AuthRequest, res) => {
   res.status(200).send(SuccessResponse(updated));
 });
 
-const removeAccount = asyncHandler(async (req, res) => {
+const removeAccount = asyncHandler(async (req: AuthRequest, res) => {
   const params = clean.request(req, { params: ["id"] });
-  const removed = await accountService.remove(params?.id);
+  const body = clean.request(req, { body: ["companyId"] });
+
+  if (!body?.companyId) throw new HttpException("Company ID is required", 400);
+
+  const removed = await accountService.remove({
+    id: params?.id,
+    companyId: body?.companyId,
+  });
 
   if (!removed) {
     throw new HttpException("Unable to remove company", 400);
@@ -68,7 +78,7 @@ const removeAccount = asyncHandler(async (req, res) => {
   res.status(200).send(SuccessResponse(removed));
 });
 
-const restoreTender = asyncHandler(async (req, res) => {
+const restoreAccount = asyncHandler(async (req, res) => {
   const params = clean.request(req, { params: ["id"] });
   const restored = await accountService.restore(params?.id);
 
@@ -90,31 +100,47 @@ const getById = asyncHandler(async (req, res) => {
   res.status(200).send(SuccessResponse(tender));
 });
 
-const get = asyncHandler(async (_req, res) => {
-  const tender = await accountService.find({});
+const get = asyncHandler(async (req, res) => {
+  const query = clean.request(req, {
+    query: ["companyId", "title", "accountTypeId"],
+  });
+
+  const tender = await accountService.find({
+    ...(query?.companyId ? { companyId: query?.companyId } : {}),
+    ...(query?.accountTypeId ? { accountTypeId: query?.accountTypeId } : {}),
+    ...(query?.title ? { title: query?.title } : {}),
+  });
 
   res.status(200).send(SuccessResponse(tender));
 });
 
 const getAll = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId"] });
+  const query = clean.request(req, {
+    query: ["companyId", "accountTypeId", "title"],
+  });
 
   const tenders = await accountService.find({
     ...(query?.companyId ? { companyId: query?.companyId } : {}),
+    ...(query?.accountTypeId ? { accountTypeId: query?.accountTypeId } : {}),
+    ...(query?.title ? { title: query?.title } : {}),
   });
 
   res.status(200).send(SuccessResponse(tenders));
 });
 
 const getPaginated = asyncHandler(async (req: AuthRequest, res) => {
-  const query = clean.request(req, { query: ["companyId", "page", "limit"] });
+  const query = clean.request(req, {
+    query: ["companyId", "accountTypeId", "page", "limit"],
+  });
 
   const data = await accountService.paginate({
     page: query?.page,
     limit: query?.limit,
     where: {
       ...(query?.companyId ? { companyId: query?.companyId } : {}),
+      ...(query?.accountTypeId ? { accountTypeId: query?.accountTypeId } : {}),
     },
+    relations: ["accountType"],
   });
 
   res.status(200).send(SuccessResponse(data));
@@ -127,7 +153,7 @@ const accountController = {
   getById,
   get,
   getAll,
-  restoreTender,
+  restoreTender: restoreAccount,
   getPaginated,
 };
 

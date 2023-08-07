@@ -3,32 +3,42 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Account } from "./account";
+import { Order } from "./order";
 
 @Entity()
-export class ItemTransaction {
+export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  amount: number;
+  total: number;
 
-  @Column({ nullable: true })
-  quantity: number;
+  @Column()
+  salePrice: number;
 
-  @ManyToOne(() => Account, (account) => account.transactions)
+  @Column()
+  saleQuantity: number;
+
+  @ManyToOne(() => Order, { onDelete: "CASCADE" })
+  @JoinColumn()
+  order: Order;
+
+  @Column()
+  orderId: number;
+
+  @ManyToOne(() => Account, { onDelete: "CASCADE" })
+  @JoinColumn()
   item: Account;
 
   @Column()
   itemId: number;
-
-  @Column()
-  positive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
